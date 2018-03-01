@@ -1,0 +1,47 @@
+Step1:- Collecting Data
+Here we will develop simple credit approval model using c5.0 decision trees
+
+
+Step2:- Exploring and Preparing the data
+#importing dataset
+credit <- read.csv("../input/credit.csv")
+str(credit)
+table(credit$checking_balance)
+table(credit$saving_balance)
+summary(credit$months_loan_duration)
+summary(credit$amount)
+table(credit$default)
+convert_change<-function(x){
+  credit$default<-ifelse(credit$default>1,"yes","no")
+}
+str(credit)
+
+
+#Sampling 
+sample <- sample(1000,900)
+str(sample)
+#splitting the dataset into train and test
+train <- credit[sample,]
+test <- credit[-sample,]
+prop.table(table(train$default))
+prop.table(table(test$default))
+
+
+Step3:- Training a model on the data
+#install.packages("c50")
+library(C50)
+train$default<-as.factor(train$default)
+model <- C5.0(train[-17],train$default)
+summary(model)
+
+
+Step4:- Evaluating Model performance
+predict <- predict(model,test)
+table(test$default,predict)
+
+
+Step5:-Improving model performence
+
+#Before doing this you need convert class character into numeric and then to matrix
+#library(xgboost)
+#classifier <- xgboost(data = as.matrix(train[-17]),label = train$default,nrounds = 10)
